@@ -1,5 +1,4 @@
 import Rx from 'rxjs';
-import Config from '../config';
 import deepFreeze from 'deep-freeze';
 
 export function createAction() {
@@ -21,7 +20,7 @@ export function createStore(name, reducer$, initialState$ = Rx.Observable.of({})
       return {...state, ...reducer(state)};
     })
     .do((state) => {
-      if (Config.isDev) {
+      if (process.env.NODE_ENV === 'development') {
         deepFreeze(state);
         // eslint-disable-next-line no-console
         console.debug(name, state);

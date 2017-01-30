@@ -16,10 +16,6 @@ var _rxjs = require('rxjs');
 
 var _rxjs2 = _interopRequireDefault(_rxjs);
 
-var _config = require('../config');
-
-var _config2 = _interopRequireDefault(_config);
-
 var _deepFreeze = require('deep-freeze');
 
 var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
@@ -55,7 +51,7 @@ function createStore(name, reducer$) {
     }
     return _extends({}, state, reducer(state));
   }).do(function (state) {
-    if (_config2.default.isDev) {
+    if (process.env.NODE_ENV === 'development') {
       (0, _deepFreeze2.default)(state);
       // eslint-disable-next-line no-console
       console.debug(name, state);
