@@ -1,12 +1,18 @@
 import Rx from 'rxjs';
 import deepFreeze from 'deep-freeze';
 
-export function createAction() {
-  return new Rx.Subject();
+const maybeLogAction = name => action => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(name, action);
+  }
+};
+
+export function createAction(name) {
+  return new Rx.Subject().do(maybeLogAction(name));
 }
 
 export function createActions(...actionNames) {
-  return actionNames.reduce((akk, name) => ({...akk, [name]: createAction()}), {});
+  return actionNames.reduce((akk, name) => ({...akk, [name]: createAction(name)}), {});
 }
 
 export function createStore(name, reducer$, initialState$ = Rx.Observable.of({})) {

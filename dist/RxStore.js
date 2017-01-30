@@ -24,8 +24,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function createAction() {
-  return new _rxjs2.default.Subject();
+var maybeLogAction = function maybeLogAction(name) {
+  return function (action) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(name, action);
+    }
+  };
+};
+
+function createAction(name) {
+  return new _rxjs2.default.Subject().do(maybeLogAction(name));
 }
 
 function createActions() {
@@ -34,7 +42,7 @@ function createActions() {
   }
 
   return actionNames.reduce(function (akk, name) {
-    return _extends({}, akk, _defineProperty({}, name, createAction()));
+    return _extends({}, akk, _defineProperty({}, name, createAction(name)));
   }, {});
 }
 
