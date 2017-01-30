@@ -68,7 +68,7 @@ exports.default = function (providing) {
       return Provided;
     }(_react2.default.Component);
 
-    Provided.hildContextTypes = types;
+    Provided.childContextTypes = types;
 
     return Provided;
   };

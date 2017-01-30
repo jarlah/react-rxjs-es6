@@ -31,7 +31,7 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     return acc;
   }, {});
 
-  const contextTypes = entries(Object.extend({}, data)).reduce((acc, [k, v]) => {
+  const contextTypes = entries({ ...data}).reduce((acc, [k, v]) => {
     if (v.type) {
       acc[k] = v.type;
     }
@@ -39,6 +39,7 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
   }, {});
 
   class Injected extends React.Component {
+    static contextTypes = contextTypes;
 
     constructor(p, c) {
       super(p, c);
@@ -54,23 +55,23 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
         const contextVal = this.context[k];
         if (v.type && contextVal) {
           if (v.mapToProps) {
-            return Object.extend({},
-              acc,
-              v.mapToProps(contextVal)
-            );
+            return {
+              ...acc,
+              ...v.mapToProps(contextVal)
+            };
           }
-          return Object.extend({},
-            acc,
-            { [k]: contextVal }
-          );
+          return {
+            ...acc,
+            [k]: contextVal
+          };
         }
         return acc;
       }, {});
 
-      const allObservables = Object.extend({},
-        observablesFromValue,
-        observablesFromContext
-      );
+      const allObservables = {
+        ...observablesFromValue,
+        ...observablesFromContext
+      };
 
       this.propsObservable = Object.keys(allObservables).length === 0
         ? Observable.of([{}])
@@ -80,7 +81,7 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     render() {
       return (
         <RxContainer
-          props={Object.extend({}, this.props, props)}
+          props={{...this.props, ...props}}
           callbacks={callbacks}
           component={Component}
           observable={this.propsObservable}
@@ -89,7 +90,5 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     }
   }
 
-  Injected.contextTypes = contextTypes;
-
-  return () => <Injected />;
+  return (initialProps) => <Injected {...initialProps} />;
 };

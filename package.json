@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src --presets babel-preset-es2015 --out-dir dist",
+    "build": "babel src --out-dir dist",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -20,7 +20,9 @@
   "homepage": "https://github.com/MUSIT-Norway/react-rxjs#readme",
   "devDependencies": {
     "babel-cli": "^6.22.2",
-    "babel-preset-es2015": "^6.22.0"
+    "babel-plugin-transform-object-rest-spread": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0"
   },
   "dependencies": {
     "babel-loader": "^6.2.10",

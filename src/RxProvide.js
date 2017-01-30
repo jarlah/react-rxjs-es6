@@ -12,6 +12,7 @@ export default (providing) => (Component) => {
   const types = mapObject(providing, (v) => v.type);
   const objects = mapObject(providing, (v) => v.value);
   class Provided extends React.Component {
+    static childContextTypes = types;
 
     getChildContext() {
       return objects;
@@ -21,8 +22,5 @@ export default (providing) => (Component) => {
       return <Component {...this.props} />;
     }
   }
-
-  Provided.hildContextTypes = types;
-
   return Provided;
 };

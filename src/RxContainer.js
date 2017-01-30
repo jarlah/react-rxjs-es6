@@ -2,6 +2,14 @@ import React from 'react';
 
 export default class RxContainer extends React.Component {
 
+  static propTypes = {
+    component: React.PropTypes.func,
+    observable: React.PropTypes.object,
+    initialState: React.PropTypes.object,
+    props: React.PropTypes.object,
+    callbacks: React.PropTypes.object
+  };
+
   componentDidMount() {
     this.subscription = this.props.observable.subscribe(props => {
       this.setState({props});
@@ -36,11 +44,3 @@ export default class RxContainer extends React.Component {
     );
   }
 }
-
-RxContainer.propTypes = {
-  component: React.PropTypes.func,
-  observable: React.PropTypes.object,
-  initialState: React.PropTypes.object,
-  props: React.PropTypes.object,
-  callbacks: React.PropTypes.object
-};

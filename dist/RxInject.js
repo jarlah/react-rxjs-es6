@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _react = require('react');
@@ -67,7 +69,7 @@ exports.default = function () {
       return acc;
     }, {});
 
-    var contextTypes = (0, _object2.default)(Object.extend({}, data)).reduce(function (acc, _ref3) {
+    var contextTypes = (0, _object2.default)(_extends({}, data)).reduce(function (acc, _ref3) {
       var _ref4 = _slicedToArray(_ref3, 2),
           k = _ref4[0],
           v = _ref4[1];
@@ -105,14 +107,14 @@ exports.default = function () {
           var contextVal = _this.context[k];
           if (v.type && contextVal) {
             if (v.mapToProps) {
-              return Object.extend({}, acc, v.mapToProps(contextVal));
+              return _extends({}, acc, v.mapToProps(contextVal));
             }
-            return Object.extend({}, acc, _defineProperty({}, k, contextVal));
+            return _extends({}, acc, _defineProperty({}, k, contextVal));
           }
           return acc;
         }, {});
 
-        var allObservables = Object.extend({}, observablesFromValue, observablesFromContext);
+        var allObservables = _extends({}, observablesFromValue, observablesFromContext);
 
         _this.propsObservable = Object.keys(allObservables).length === 0 ? _rxjs.Observable.of([{}]) : combineLatestObj(allObservables).share();
         return _this;
@@ -122,7 +124,7 @@ exports.default = function () {
         key: 'render',
         value: function render() {
           return _react2.default.createElement(_RxContainer2.default, {
-            props: Object.extend({}, this.props, props),
+            props: _extends({}, this.props, props),
             callbacks: callbacks,
             component: Component,
             observable: this.propsObservable
@@ -135,8 +137,9 @@ exports.default = function () {
 
     Injected.contextTypes = contextTypes;
 
-    return function () {
-      return _react2.default.createElement(Injected, null);
+
+    return function (initialProps) {
+      return _react2.default.createElement(Injected, initialProps);
     };
   };
 };

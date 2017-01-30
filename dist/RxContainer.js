@@ -70,9 +70,6 @@ var RxContainer = function (_React$Component) {
   return RxContainer;
 }(_react2.default.Component);
 
-exports.default = RxContainer;
-
-
 RxContainer.propTypes = {
   component: _react2.default.PropTypes.func,
   observable: _react2.default.PropTypes.object,
@@ -80,3 +77,4 @@ RxContainer.propTypes = {
   props: _react2.default.PropTypes.object,
   callbacks: _react2.default.PropTypes.object
 };
+exports.default = RxContainer;
