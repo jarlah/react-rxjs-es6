@@ -1,6 +1,4 @@
-import RxContainer from './RxContainer';
-import RxProvide from './RxProvide';
-import RxStore from './RxStore';
-import RxInject from './RxInject';
-
-export default { RxContainer, RxInject, RxProvide, RxStore };
+export const RxContainer = require('./RxContainer');
+export const RxProvide = require('./RxProvide');
+export const RxStore = require('./RxStore');
+export const RxInject = require('./RxInject');
