@@ -110,7 +110,7 @@ export default inject(data, commands)(StuffComponent);
 
 The following documentation describe the two higher order functions provide and inject. 
 
-## provide
+#### provide
 provides services objects to all underlying components with the use of react context
 - Example: { someService$: { type: React.PropTypes.object, value: someService$ } }
 
@@ -127,7 +127,7 @@ export default provide({
 })(appRouter);
 ```
 
-## inject
+#### inject
 injects data and commands as props to connected component
 - data:
     - An object with values of type Rx.Observables or plain objects, either by value or from context
