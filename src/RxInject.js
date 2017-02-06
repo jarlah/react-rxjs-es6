@@ -57,6 +57,7 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
           if (v.mapToProps) {
             return {
               ...acc,
+              [k]: contextVal,
               ...v.mapToProps(contextVal)
             };
           }
