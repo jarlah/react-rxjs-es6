@@ -107,7 +107,7 @@ exports.default = function () {
           var contextVal = _this.context[k];
           if (v.type && contextVal) {
             if (v.mapToProps) {
-              return _extends({}, acc, v.mapToProps(contextVal));
+              return _extends({}, acc, _defineProperty({}, k, contextVal), v.mapToProps(contextVal));
             }
             return _extends({}, acc, _defineProperty({}, k, contextVal));
           }
