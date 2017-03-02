@@ -23,7 +23,7 @@ export function createStore(name, reducer$, initialState$ = Rx.Observable.of({})
         const [scope, reducerFn] = reducer;
         return {...state, [scope]: reducerFn(state[scope])};
       }
-      return {...state, ...reducer(state)};
+      return reducer(state);
     })
     .do((state) => {
       if (process.env.NODE_ENV === 'development') {

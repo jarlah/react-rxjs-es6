@@ -57,7 +57,7 @@ function createStore(name, reducer$) {
 
       return _extends({}, state, _defineProperty({}, scope, reducerFn(state[scope])));
     }
-    return _extends({}, state, reducer(state));
+    return reducer(state);
   }).do(function (state) {
     if (process.env.NODE_ENV === 'development') {
       (0, _deepFreeze2.default)(state);
