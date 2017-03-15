@@ -1,5 +1,10 @@
 import React from 'react';
 
+const withDevTools = (
+  process.env.NODE_ENV === 'development' &&
+  typeof window !== 'undefined' && window.devToolsExtension
+);
+
 export default class RxContainer extends React.Component {
 
   static propTypes = {
@@ -10,9 +15,22 @@ export default class RxContainer extends React.Component {
     callbacks: React.PropTypes.object
   };
 
+  componentWillMount() {
+    if (withDevTools) {
+      this.devTools = window.devToolsExtension.connect();
+      this.unsubscribe = this.devTools.subscribe((message) => {
+        if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_ACTION') {
+          const props = JSON.parse(message.state);
+          this.setState({ props });
+        }
+      });
+    }
+  }
+
   componentDidMount() {
     this.subscription = this.props.observable.subscribe(props => {
-      this.setState({props});
+      this.devTools.send('update', props);
+      this.setState({ props });
     });
   }
 
@@ -21,13 +39,18 @@ export default class RxContainer extends React.Component {
       this.subscription.unsubscribe();
       this.setState({props: nextProps.initialState});
       this.subscription = nextProps.observable.subscribe(props => {
-        this.setState({props});
+        this.devTools.send('update', props);
+        this.setState({ props });
       });
     }
   }
 
   componentWillUnmount() {
     this.subscription.unsubscribe();
+    if (withDevTools) {
+      this.unsubscribe();
+      window.devToolsExtension.disconnect();
+    }
   }
 
   render() {

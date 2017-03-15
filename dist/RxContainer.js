@@ -20,6 +20,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var withDevTools = process.env.NODE_ENV === 'development' && typeof window !== 'undefined' && window.devToolsExtension;
+
 var RxContainer = function (_React$Component) {
   _inherits(RxContainer, _React$Component);
 
@@ -30,24 +32,41 @@ var RxContainer = function (_React$Component) {
   }
 
   _createClass(RxContainer, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
+    key: 'componentWillMount',
+    value: function componentWillMount() {
       var _this2 = this;
 
+      if (withDevTools) {
+        this.devTools = window.devToolsExtension.connect();
+        this.unsubscribe = this.devTools.subscribe(function (message) {
+          if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_ACTION') {
+            var props = JSON.parse(message.state);
+            _this2.setState({ props: props });
+          }
+        });
+      }
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this3 = this;
+
       this.subscription = this.props.observable.subscribe(function (props) {
-        _this2.setState({ props: props });
+        _this3.devTools.send('update', props);
+        _this3.setState({ props: props });
       });
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (nextProps.observable !== this.props.observable) {
         this.subscription.unsubscribe();
         this.setState({ props: nextProps.initialState });
         this.subscription = nextProps.observable.subscribe(function (props) {
-          _this3.setState({ props: props });
+          _this4.devTools.send('update', props);
+          _this4.setState({ props: props });
         });
       }
     }
@@ -55,6 +74,10 @@ var RxContainer = function (_React$Component) {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       this.subscription.unsubscribe();
+      if (withDevTools) {
+        this.unsubscribe();
+        window.devToolsExtension.disconnect();
+      }
     }
   }, {
     key: 'render',
