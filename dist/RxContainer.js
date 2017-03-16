@@ -22,7 +22,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var getDevToolsExt = function getDevToolsExt() {
   if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-    return window.devToolsExtension || window.__REDUX_DEVTOOLS_EXTENSION__;
+    return window.__REDUX_DEVTOOLS_EXTENSION__ && window.devToolsExtension;
   }
 };
 
@@ -57,7 +57,9 @@ var RxContainer = function (_React$Component) {
       var _this3 = this;
 
       this.subscription = this.props.observable.subscribe(function (props) {
-        _this3.devTools.send('update', props);
+        if (_this3.devTools) {
+          _this3.devTools.send('update', props);
+        }
         _this3.setState({ props: props });
       });
     }
@@ -70,7 +72,9 @@ var RxContainer = function (_React$Component) {
         this.subscription.unsubscribe();
         this.setState({ props: nextProps.initialState });
         this.subscription = nextProps.observable.subscribe(function (props) {
-          _this4.devTools.send('update', props);
+          if (_this4.devTools) {
+            _this4.devTools.send('update', props);
+          }
           _this4.setState({ props: props });
         });
       }
