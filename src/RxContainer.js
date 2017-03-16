@@ -2,7 +2,7 @@ import React from 'react';
 
 const getDevToolsExt = () => {
   if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-    return window.devToolsExtension || window.__REDUX_DEVTOOLS_EXTENSION__;
+    return window.__REDUX_DEVTOOLS_EXTENSION__ && window.devToolsExtension;
   }
 };
 
@@ -31,7 +31,9 @@ export default class RxContainer extends React.Component {
 
   componentDidMount() {
     this.subscription = this.props.observable.subscribe(props => {
-      this.devTools.send('update', props);
+      if (this.devTools) {
+        this.devTools.send('update', props);
+      }
       this.setState({ props });
     });
   }
@@ -41,7 +43,9 @@ export default class RxContainer extends React.Component {
       this.subscription.unsubscribe();
       this.setState({props: nextProps.initialState});
       this.subscription = nextProps.observable.subscribe(props => {
-        this.devTools.send('update', props);
+        if (this.devTools) {
+          this.devTools.send('update', props);
+        }
         this.setState({ props });
       });
     }
