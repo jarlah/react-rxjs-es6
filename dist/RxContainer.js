@@ -20,7 +20,11 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var withDevTools = process.env.NODE_ENV === 'development' && typeof window !== 'undefined' && window.devToolsExtension;
+var getDevToolsExt = function getDevToolsExt() {
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+    return window.devToolsExtension || window.__REDUX_DEVTOOLS_EXTENSION__;
+  }
+};
 
 var RxContainer = function (_React$Component) {
   _inherits(RxContainer, _React$Component);
@@ -36,8 +40,9 @@ var RxContainer = function (_React$Component) {
     value: function componentWillMount() {
       var _this2 = this;
 
-      if (withDevTools) {
-        this.devTools = window.devToolsExtension.connect();
+      var devToolsExt = getDevToolsExt();
+      if (devToolsExt) {
+        this.devTools = devToolsExt.connect();
         this.unsubscribe = this.devTools.subscribe(function (message) {
           if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_ACTION') {
             var props = JSON.parse(message.state);
@@ -74,9 +79,10 @@ var RxContainer = function (_React$Component) {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       this.subscription.unsubscribe();
-      if (withDevTools) {
+      var devToolsExt = getDevToolsExt();
+      if (devToolsExt) {
         this.unsubscribe();
-        window.devToolsExtension.disconnect();
+        devToolsExt.disconnect();
       }
     }
   }, {

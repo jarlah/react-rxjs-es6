@@ -1,9 +1,10 @@
 import React from 'react';
 
-const withDevTools = (
-  process.env.NODE_ENV === 'development' &&
-  typeof window !== 'undefined' && window.devToolsExtension
-);
+const getDevToolsExt = () => {
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+    return window.devToolsExtension || window.__REDUX_DEVTOOLS_EXTENSION__;
+  }
+};
 
 export default class RxContainer extends React.Component {
 
@@ -16,8 +17,9 @@ export default class RxContainer extends React.Component {
   };
 
   componentWillMount() {
-    if (withDevTools) {
-      this.devTools = window.devToolsExtension.connect();
+    const devToolsExt = getDevToolsExt();
+    if (devToolsExt) {
+      this.devTools = devToolsExt.connect();
       this.unsubscribe = this.devTools.subscribe((message) => {
         if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_ACTION') {
           const props = JSON.parse(message.state);
@@ -47,9 +49,10 @@ export default class RxContainer extends React.Component {
 
   componentWillUnmount() {
     this.subscription.unsubscribe();
-    if (withDevTools) {
+    const devToolsExt = getDevToolsExt();
+    if (devToolsExt) {
       this.unsubscribe();
-      window.devToolsExtension.disconnect();
+      devToolsExt.disconnect();
     }
   }
 
