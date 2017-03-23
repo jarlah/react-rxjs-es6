@@ -27,7 +27,9 @@ export function createStore(name, reducer$, initialState$ = Rx.Observable.of({})
     })
     .do((state) => {
       if (process.env.NODE_ENV === 'development') {
-        deepFreeze(state);
+        if (state && !Array.isArray(state)) {
+          deepFreeze(state);
+        }
         // eslint-disable-next-line no-console
         console.debug(name, state);
       }
