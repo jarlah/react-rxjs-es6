@@ -44,7 +44,7 @@ var RxContainer = function (_React$Component) {
       if (devToolsExt) {
         this.devTools = devToolsExt.connect();
         this.unsubscribe = this.devTools.subscribe(function (message) {
-          if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_ACTION') {
+          if (message.type === 'DISPATCH' && (message.payload.type === 'JUMP_TO_ACTION' || message.payload.type === 'JUMP_TO_STATE')) {
             var props = JSON.parse(message.state);
             _this2.setState({ props: props });
           }

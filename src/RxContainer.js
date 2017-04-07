@@ -21,7 +21,7 @@ export default class RxContainer extends React.Component {
     if (devToolsExt) {
       this.devTools = devToolsExt.connect();
       this.unsubscribe = this.devTools.subscribe((message) => {
-        if (message.type === 'DISPATCH' && message.payload.type === 'JUMP_TO_ACTION') {
+        if (message.type === 'DISPATCH' && (message.payload.type === 'JUMP_TO_ACTION' || message.payload.type === 'JUMP_TO_STATE')) {
           const props = JSON.parse(message.state);
           this.setState({ props });
         }
