@@ -171,3 +171,9 @@ const commands = {
 };
 export default inject(data, commands)(SomeComp);
 ```
+
+## How to release the project
+
+- set the new version in package json
+- run `npm run build` and commit the dist folder
+- tag the release with git and push the changes

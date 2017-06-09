@@ -123,8 +123,9 @@ exports.default = function () {
       _createClass(Injected, [{
         key: 'render',
         value: function render() {
+          var p = typeof props === 'function' ? props(this.props) : props;
           return _react2.default.createElement(_RxContainer2.default, {
-            props: _extends({}, this.props, props),
+            props: _extends({}, this.props, p),
             callbacks: callbacks,
             component: Component,
             observable: this.propsObservable

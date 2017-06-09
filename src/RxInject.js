@@ -80,9 +80,10 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     }
 
     render() {
+      const p = typeof props === 'function' ? props(this.props) : props;
       return (
         <RxContainer
-          props={{...this.props, ...props}}
+          props={{...this.props, ...p}}
           callbacks={callbacks}
           component={Component}
           observable={this.propsObservable}

@@ -1,13 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class RxContainer extends React.Component {
 
   static propTypes = {
-    component: React.PropTypes.func,
-    observable: React.PropTypes.object,
-    initialState: React.PropTypes.object,
-    props: React.PropTypes.object,
-    callbacks: React.PropTypes.object
+    component: PropTypes.func,
+    observable: PropTypes.object,
+    initialState: PropTypes.object,
+    props: PropTypes.object,
+    callbacks: PropTypes.object
   };
 
   componentDidMount() {
