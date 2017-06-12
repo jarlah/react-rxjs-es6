@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const getDevToolsExt = () => {
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+    return window.__REDUX_DEVTOOLS_EXTENSION__ && window.devToolsExtension;
+  }
+};
+
 export default class RxContainer extends React.Component {
 
   static propTypes = {
@@ -11,9 +17,25 @@ export default class RxContainer extends React.Component {
     callbacks: PropTypes.object
   };
 
+  componentWillMount() {
+    const devToolsExt = getDevToolsExt();
+    if (devToolsExt) {
+      this.devTools = devToolsExt.connect();
+      this.unsubscribe = this.devTools.subscribe((message) => {
+        if (message.type === 'DISPATCH' && (message.payload.type === 'JUMP_TO_ACTION' || message.payload.type === 'JUMP_TO_STATE')) {
+          const props = JSON.parse(message.state);
+          this.setState({ props });
+        }
+      });
+    }
+  }
+
   componentDidMount() {
     this.subscription = this.props.observable.subscribe(props => {
-      this.setState({props});
+      if (this.devTools) {
+        this.devTools.send('update', props);
+      }
+      this.setState({ props });
     });
   }
 
@@ -22,13 +44,21 @@ export default class RxContainer extends React.Component {
       this.subscription.unsubscribe();
       this.setState({props: nextProps.initialState});
       this.subscription = nextProps.observable.subscribe(props => {
-        this.setState({props});
+        if (this.devTools) {
+          this.devTools.send('update', props);
+        }
+        this.setState({ props });
       });
     }
   }
 
   componentWillUnmount() {
     this.subscription.unsubscribe();
+    const devToolsExt = getDevToolsExt();
+    if (devToolsExt) {
+      this.unsubscribe();
+      devToolsExt.disconnect();
+    }
   }
 
   render() {

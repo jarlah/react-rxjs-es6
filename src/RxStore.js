@@ -23,11 +23,13 @@ export function createStore(name, reducer$, initialState$ = Rx.Observable.of({})
         const [scope, reducerFn] = reducer;
         return {...state, [scope]: reducerFn(state[scope])};
       }
-      return {...state, ...reducer(state)};
+      return reducer(state);
     })
     .do((state) => {
       if (process.env.NODE_ENV === 'development') {
-        deepFreeze(state);
+        if (state && !Array.isArray(state)) {
+          deepFreeze(state);
+        }
         // eslint-disable-next-line no-console
         console.debug(name, state);
       }
