@@ -99,8 +99,10 @@ var RxContainer = function (_React$Component) {
       if (!this.state) {
         return null;
       }
+      var upstreamProps = _extends({}, this.props, this.state.props);
+      var customProps = typeof this.props.injectedProps === 'function' ? this.props.injectedProps(upstreamProps) : _extends({}, upstreamProps, this.props.injectedProps);
       var Component = this.props.component;
-      return _react2.default.createElement(Component, _extends({}, this.props.props, this.props.callbacks, this.state.props));
+      return _react2.default.createElement(Component, _extends({}, this.props, this.state.props, customProps));
     }
   }]);
 
@@ -110,8 +112,6 @@ var RxContainer = function (_React$Component) {
 RxContainer.propTypes = {
   component: _propTypes2.default.func,
   observable: _propTypes2.default.object,
-  initialState: _propTypes2.default.object,
-  props: _propTypes2.default.object,
-  callbacks: _propTypes2.default.object
+  injectedProps: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.object]).isRequired
 };
 exports.default = RxContainer;

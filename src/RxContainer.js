@@ -12,9 +12,7 @@ export default class RxContainer extends React.Component {
   static propTypes = {
     component: PropTypes.func,
     observable: PropTypes.object,
-    initialState: PropTypes.object,
-    props: PropTypes.object,
-    callbacks: PropTypes.object
+    injectedProps: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired
   };
 
   componentWillMount() {
@@ -65,12 +63,19 @@ export default class RxContainer extends React.Component {
     if (!this.state) {
       return null;
     }
+    const upstreamProps = { ...this.props, ...this.state.props };
+    const customProps = typeof this.props.injectedProps === 'function'
+      ? this.props.injectedProps(upstreamProps)
+      : {
+        ...upstreamProps,
+        ...this.props.injectedProps
+      };
     const Component = this.props.component;
     return (
       <Component
-        {...this.props.props}
-        {...this.props.callbacks}
+        {...this.props}
         {...this.state.props}
+        {...customProps}
       />
     );
   }

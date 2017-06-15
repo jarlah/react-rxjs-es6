@@ -38,7 +38,7 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     return acc;
   }, {});
 
-  class Injected extends React.Component {
+  class RxInject extends React.Component {
     static contextTypes = contextTypes;
 
     constructor(p, c) {
@@ -80,11 +80,11 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     }
 
     render() {
-      const p = typeof props === 'function' ? props(this.props) : props;
       return (
         <RxContainer
-          props={{...this.props, ...p}}
-          callbacks={callbacks}
+          {...this.props}
+          {...callbacks}
+          injectedProps={props}
           component={Component}
           observable={this.propsObservable}
         />
@@ -92,5 +92,5 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     }
   }
 
-  return (initialProps) => <Injected {...initialProps} />;
+  return (initialProps) => <RxInject {...initialProps} />;
 };

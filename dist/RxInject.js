@@ -80,13 +80,13 @@ exports.default = function () {
       return acc;
     }, {});
 
-    var Injected = function (_React$Component) {
-      _inherits(Injected, _React$Component);
+    var RxInject = function (_React$Component) {
+      _inherits(RxInject, _React$Component);
 
-      function Injected(p, c) {
-        _classCallCheck(this, Injected);
+      function RxInject(p, c) {
+        _classCallCheck(this, RxInject);
 
-        var _this = _possibleConstructorReturn(this, (Injected.__proto__ || Object.getPrototypeOf(Injected)).call(this, p, c));
+        var _this = _possibleConstructorReturn(this, (RxInject.__proto__ || Object.getPrototypeOf(RxInject)).call(this, p, c));
 
         var observablesFromValue = (0, _object2.default)(data).reduce(function (acc, _ref5) {
           var _ref6 = _slicedToArray(_ref5, 2),
@@ -120,27 +120,25 @@ exports.default = function () {
         return _this;
       }
 
-      _createClass(Injected, [{
+      _createClass(RxInject, [{
         key: 'render',
         value: function render() {
-          var p = typeof props === 'function' ? props(this.props) : props;
-          return _react2.default.createElement(_RxContainer2.default, {
-            props: _extends({}, this.props, p),
-            callbacks: callbacks,
+          return _react2.default.createElement(_RxContainer2.default, _extends({}, this.props, callbacks, {
+            injectedProps: props,
             component: Component,
             observable: this.propsObservable
-          });
+          }));
         }
       }]);
 
-      return Injected;
+      return RxInject;
     }(_react2.default.Component);
 
-    Injected.contextTypes = contextTypes;
+    RxInject.contextTypes = contextTypes;
 
 
     return function (initialProps) {
-      return _react2.default.createElement(Injected, initialProps);
+      return _react2.default.createElement(RxInject, initialProps);
     };
   };
 };
