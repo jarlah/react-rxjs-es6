@@ -71,12 +71,6 @@ export default class RxContainer extends React.Component {
         ...this.props.injectedProps
       };
     const Component = this.props.component;
-    return (
-      <Component
-        {...this.props}
-        {...this.state.props}
-        {...customProps}
-      />
-    );
+    return <Component {...customProps} />;
   }
 }

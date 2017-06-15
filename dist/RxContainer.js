@@ -102,7 +102,7 @@ var RxContainer = function (_React$Component) {
       var upstreamProps = _extends({}, this.props, this.state.props);
       var customProps = typeof this.props.injectedProps === 'function' ? this.props.injectedProps(upstreamProps) : _extends({}, upstreamProps, this.props.injectedProps);
       var Component = this.props.component;
-      return _react2.default.createElement(Component, _extends({}, this.props, this.state.props, customProps));
+      return _react2.default.createElement(Component, customProps);
     }
   }]);
 
