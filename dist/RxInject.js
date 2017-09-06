@@ -6,9 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+exports.default = inject;
 
 var _react = require('react');
 
@@ -16,17 +14,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _rxjs = require('rxjs');
 
-var _RxContainer = require('./RxContainer');
-
-var _RxContainer2 = _interopRequireDefault(_RxContainer);
-
-var _object = require('object.entries');
-
-var _object2 = _interopRequireDefault(_object);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -34,111 +22,75 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function combineLatestObj(obj) {
-  var sources = [];
-  var keys = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (var key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      keys.push(key.replace(/\$$/, ''));
-      sources.push(obj[key]);
-    }
-  }
-  return _rxjs.Observable.combineLatest(sources, function () {
-    var combination = {};
-    for (var i = arguments.length - 1; i >= 0; i -= 1) {
-      combination[keys[i]] = arguments.length <= i ? undefined : arguments[i];
-    }
-    return combination;
-  });
-}
-
-exports.default = function () {
-  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var commands = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var props = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+function inject(store, props) {
   return function (Component) {
-    var callbacks = (0, _object2.default)(commands).reduce(function (acc, _ref) {
-      var _ref2 = _slicedToArray(_ref, 2),
-          key = _ref2[0],
-          observer = _ref2[1];
+    var Inject = function (_React$Component) {
+      _inherits(Inject, _React$Component);
 
-      acc[key.replace(/\$$/, '')] = function (value) {
-        return observer.next(value);
-      };
-      return acc;
-    }, {});
+      function Inject() {
+        _classCallCheck(this, Inject);
 
-    var contextTypes = (0, _object2.default)(_extends({}, data)).reduce(function (acc, _ref3) {
-      var _ref4 = _slicedToArray(_ref3, 2),
-          k = _ref4[0],
-          v = _ref4[1];
-
-      if (v.type) {
-        acc[k] = v.type;
+        return _possibleConstructorReturn(this, (Inject.__proto__ || Object.getPrototypeOf(Inject)).apply(this, arguments));
       }
-      return acc;
-    }, {});
 
-    var RxInject = function (_React$Component) {
-      _inherits(RxInject, _React$Component);
+      _createClass(Inject, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+          var _this2 = this;
 
-      function RxInject(p, c) {
-        _classCallCheck(this, RxInject);
-
-        var _this = _possibleConstructorReturn(this, (RxInject.__proto__ || Object.getPrototypeOf(RxInject)).call(this, p, c));
-
-        var observablesFromValue = (0, _object2.default)(data).reduce(function (acc, _ref5) {
-          var _ref6 = _slicedToArray(_ref5, 2),
-              k = _ref6[0],
-              v = _ref6[1];
-
-          if (v.subscribe) {
-            acc[k] = v;
+          var devToolsExt = getDevToolsExt();
+          if (devToolsExt) {
+            this.devTools = devToolsExt.connect();
+            this.unsubscribe = this.devTools.subscribe(function (message) {
+              if (message.type === 'DISPATCH' && (message.payload.type === 'JUMP_TO_ACTION' || message.payload.type === 'JUMP_TO_STATE')) {
+                var _props = JSON.parse(message.state);
+                _this2.setState({ store: _props });
+              }
+            });
           }
-          return acc;
-        }, {});
+        }
+      }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+          var _this3 = this;
 
-        var observablesFromContext = (0, _object2.default)(data).reduce(function (acc, _ref7) {
-          var _ref8 = _slicedToArray(_ref7, 2),
-              k = _ref8[0],
-              v = _ref8[1];
-
-          var contextVal = _this.context[k];
-          if (v.type && contextVal) {
-            if (v.mapToProps) {
-              return _extends({}, acc, _defineProperty({}, k, contextVal), v.mapToProps(contextVal));
+          this.subscription = store.subscribe(function (storeProps) {
+            if (_this3.devTools) {
+              _this3.devTools.send('update', storeProps);
             }
-            return _extends({}, acc, _defineProperty({}, k, contextVal));
+            _this3.setState({ store: storeProps });
+          });
+        }
+      }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+          this.subscription.unsubscribe();
+          var devToolsExt = getDevToolsExt();
+          if (devToolsExt) {
+            this.unsubscribe();
+            devToolsExt.disconnect();
           }
-          return acc;
-        }, {});
-
-        var allObservables = _extends({}, observablesFromValue, observablesFromContext);
-
-        _this.propsObservable = Object.keys(allObservables).length === 0 ? _rxjs.Observable.of([{}]) : combineLatestObj(allObservables).share();
-        return _this;
-      }
-
-      _createClass(RxInject, [{
+        }
+      }, {
         key: 'render',
         value: function render() {
-          return _react2.default.createElement(_RxContainer2.default, _extends({}, this.props, callbacks, {
-            injectedProps: props,
-            component: Component,
-            observable: this.propsObservable
-          }));
+          if (!this.state) {
+            return null;
+          }
+          var customProps = typeof props === 'function' ? props(this.state.store, this.props) : props;
+          return _react2.default.createElement(Component, customProps);
         }
       }]);
 
-      return RxInject;
+      return Inject;
     }(_react2.default.Component);
 
-    RxInject.contextTypes = contextTypes;
-
-
-    return function (initialProps) {
-      return _react2.default.createElement(RxInject, initialProps);
-    };
+    return Inject;
   };
-};
+}
+
+function getDevToolsExt() {
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+    return window.__REDUX_DEVTOOLS_EXTENSION__ && window.devToolsExtension;
+  }
+}

@@ -1,24 +1,29 @@
-import Rx from 'rxjs';
+// @flow
+import Rx, { Observable, Subject } from 'rxjs';
 import deepFreeze from 'deep-freeze';
 
-export function createAction(name) {
+export function createAction<T>(name: string): Subject<T> {
   return new Rx.Subject().do(withNodeEnv(maybeLogAction(name)));
 }
 
-export function createActions(...actionNames) {
+/**
+ * @deprecated
+ * @param actionNames
+ * @returns {*}
+ */
+export function createActions(...actionNames: Array<string>): { [string]: Subject<void> } {
   return actionNames.reduce((akk, name) => ({...akk, [name]: createAction(name)}), {});
 }
 
-export function createStore(name, reducer$, initialState$ = Rx.Observable.of({}), keepAlive = false) {
-  const store = initialState$
+export function createStore<T>(
+  name: string,
+  reducer$: Observable<(T) => T>,
+  initialState: Observable<T>,
+  keepAlive: boolean = false
+): Observable<T> {
+  const store = Observable.of(initialState)
     .merge(reducer$)
-    .scan((state, reducer) => {
-      if (Array.isArray(reducer)) {
-        const [scope, reducerFn] = reducer;
-        return {...state, [scope]: reducerFn(state[scope])};
-      }
-      return reducer(state);
-    })
+    .scan((state, reducer) => reducer(state))
     .do(withNodeEnv(maybeLogState(name)))
     .publishReplay(1)
     .refCount();
@@ -29,20 +34,26 @@ export function createStore(name, reducer$, initialState$ = Rx.Observable.of({})
   return store;
 }
 
-const withNodeEnv = (fn) => fn(process.env.NODE_ENV);
+function withNodeEnv<T>(fn: (env: ?string) => T) {
+  return fn(process.env.NODE_ENV);
+}
 
-const maybeLogAction = name => nodeEnv => action => {
-  if (nodeEnv === 'development') {
-    console.log(name, action);
-  }
-};
-
-const maybeLogState = name => nodeEnv => state => {
-  if (nodeEnv === 'development') {
-    if (state && !Array.isArray(state)) {
-      deepFreeze(state);
+function maybeLogAction<A>(name: string) {
+  return (nodeEnv: ?string) => (action: A) => {
+    if (nodeEnv === 'development') {
+      console.log(name, action);
     }
-    // eslint-disable-next-line no-console
-    console.debug(name, state);
-  }
-};
+  };
+}
+
+function maybeLogState<T>(name: string) {
+  return (nodeEnv: ?string) => (state: T) => {
+    if (nodeEnv === 'development') {
+      if (state && !Array.isArray(state)) {
+        deepFreeze(state);
+      }
+      // eslint-disable-next-line no-console
+      console.debug(name, state);
+    }
+  };
+}

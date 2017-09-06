@@ -4,6 +4,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _RxInjectOld = require('./RxInjectOld');
+
+Object.defineProperty(exports, 'RxInjectOld', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_RxInjectOld).default;
+  }
+});
+
 var _RxInject = require('./RxInject');
 
 Object.defineProperty(exports, 'RxInject', {

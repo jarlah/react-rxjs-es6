@@ -18,6 +18,7 @@
     "url": "git+https://github.com/MUSIT-Norway/react-rxjs.git"
   },
   "scripts": {
+    "flow": "flow",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src --out-dir dist && flow-copy-source src dist"
   },
