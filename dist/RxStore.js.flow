@@ -1,7 +1,19 @@
 // @flow
 import { Observable, Subject } from 'rxjs';
 
-export default function createStore<T>(
+export function createAction<T>(name: string): Observable<T> {
+  return new Subject().do((action: T) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(name, action);
+    }
+  })
+}
+
+export function createActions<T>(...actionNames: Array<string>): { [string]: Observable<T> } {
+  return actionNames.reduce((akk, name) => ({...akk, [name]: createAction(name)}), {});
+}
+
+export function createStore<T>(
   name: string,
   reducer$: Observable<(T) => T>,
   initialState: T,
@@ -23,3 +35,5 @@ export default function createStore<T>(
   }
   return store;
 }
+
+export default createStore;
