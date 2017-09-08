@@ -11,7 +11,7 @@ export function createAction<T>(name: string): Subject<T> {
   return action;
 }
 
-export function createActions<T>(...actionNames: Array<string>): { [string]: Observable<T> } {
+export function createActions<T>(...actionNames: Array<string>): { [string]: Subject<T> } {
   return actionNames.reduce((akk, name) => ({...akk, [name]: createAction(name)}), {});
 }
 
