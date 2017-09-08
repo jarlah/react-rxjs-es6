@@ -29,10 +29,13 @@ type DevTools = {
   disconnect: () => void
 };
 
+type Stores = { [string]: Observable<*> };
+
 export default function inject<ComponentProps, StoreProps, UpstreamProps>(
-  store: Observable<StoreProps>,
+  store: Observable<StoreProps> | Stores,
   props: PropsType<ComponentProps, StoreProps, UpstreamProps>
 ): Injector<ComponentProps, UpstreamProps> {
+  const observable: Observable<StoreProps> = store instanceof Observable ? store : combineLatest(store);
   return (Component: React$ComponentType<ComponentProps>) => {
     type State = { store: StoreProps };
     class Inject extends React.Component<UpstreamProps, State> {
@@ -55,7 +58,7 @@ export default function inject<ComponentProps, StoreProps, UpstreamProps>(
       }
 
       componentDidMount() {
-        this.subscription = store.subscribe(storeProps => {
+        this.subscription = observable.subscribe(storeProps => {
           if (this.devTools) {
             this.devTools.send('update', storeProps);
           }
@@ -89,4 +92,26 @@ function getDevToolsExt(): ?DevTools {
   if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
     return window.__REDUX_DEVTOOLS_EXTENSION__ && window.devToolsExtension;
   }
+}
+
+// Fixme this looks like shit
+function combineLatest<T>(stores: Stores): Observable<T> {
+  const storeValues: Array<Observable<*>> = [];
+  const storeKeys: Array<string> = [];
+  for (const key in stores) {
+    if (Object.prototype.hasOwnProperty.call(stores, key)) {
+      storeKeys.push(key.replace(/\$$/, ''));
+      storeValues.push(stores[key]);
+    }
+  }
+  // $FlowFixMe spreading is not supported by rxjs flow def
+  const data$: Observable<T> = Observable.combineLatest(...storeValues, (...args) => {
+    const combination = {};
+    for (let i = args.length - 1; i >= 0; i -= 1) {
+      combination[storeKeys[i]] = args[i];
+    }
+    return combination;
+  });
+  data$.subscribe(() => {});
+  return data$;
 }
