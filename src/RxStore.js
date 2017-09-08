@@ -13,9 +13,11 @@ export function createActions<T>(...actionNames: Array<string>): { [string]: Obs
   return actionNames.reduce((akk, name) => ({...akk, [name]: createAction(name)}), {});
 }
 
+export type Reducer<T> = (state: T) => T;
+
 export function createStore<T>(
   name: string,
-  reducer$: Observable<(T) => T>,
+  reducer$: Observable<Reducer<T>>,
   initialState: T,
   keepAlive: boolean = false
 ): Observable<T> {
