@@ -1,12 +1,14 @@
 // @flow
 import { Observable, Subject } from 'rxjs';
 
-export function createAction<T>(name: string): Observable<T> {
-  return new Subject().do((action: T) => {
+export function createAction<T>(name: string): Subject<T> {
+  const action = new Subject();
+  action.subscribe((action: T) => {
     if (process.env.NODE_ENV === 'development') {
       console.debug(name, action);
     }
-  })
+  });
+  return action;
 }
 
 export function createActions<T>(...actionNames: Array<string>): { [string]: Observable<T> } {

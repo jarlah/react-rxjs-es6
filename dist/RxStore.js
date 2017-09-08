@@ -15,11 +15,13 @@ var _rxjs = require('rxjs');
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function createAction(name) {
-  return new _rxjs.Subject().do(function (action) {
+  var action = new _rxjs.Subject();
+  action.subscribe(function (action) {
     if (process.env.NODE_ENV === 'development') {
       console.debug(name, action);
     }
   });
+  return action;
 }
 
 function createActions() {
