@@ -49,10 +49,14 @@ export default function inject<ComponentProps, StoreProps, UpstreamProps>(
         const devToolsExt = getDevToolsExt();
         if (devToolsExt) {
           this.devTools = devToolsExt.connect();
-          this.unsubscribe = this.devTools.subscribe((message) => {
-            if (message.type === 'DISPATCH' && (message.payload.type === 'JUMP_TO_ACTION' || message.payload.type === 'JUMP_TO_STATE')) {
+          this.unsubscribe = this.devTools.subscribe(message => {
+            if (
+              message.type === 'DISPATCH' &&
+              (message.payload.type === 'JUMP_TO_ACTION' ||
+                message.payload.type === 'JUMP_TO_STATE')
+            ) {
               const props: StoreProps = (JSON.parse(message.state): StoreProps);
-              this.setState({ store: props });
+              this.setState({ store: props });
             }
           });
         }

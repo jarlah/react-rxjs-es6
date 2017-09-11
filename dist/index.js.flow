@@ -1,3 +1,4 @@
+// @flow
 export { default as RxInjectLegacy } from './RxInjectOld';
 export { default as RxInject } from './RxInject';
 export { default as RxContainer } from './RxContainer';

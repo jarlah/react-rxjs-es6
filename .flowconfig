@@ -6,5 +6,7 @@
 flow-typed
 
 [lints]
+all=warn
+untyped-type-import=error
 
 [options]
