@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _RxInjectOld = require('./RxInjectOld');
 
-Object.defineProperty(exports, 'RxInject', {
+Object.defineProperty(exports, 'RxInjectLegacy', {
   enumerable: true,
   get: function get() {
     return _interopRequireDefault(_RxInjectOld).default;
@@ -15,7 +15,7 @@ Object.defineProperty(exports, 'RxInject', {
 
 var _RxInject = require('./RxInject');
 
-Object.defineProperty(exports, 'RxInjectFlow', {
+Object.defineProperty(exports, 'RxInject', {
   enumerable: true,
   get: function get() {
     return _interopRequireDefault(_RxInject).default;
