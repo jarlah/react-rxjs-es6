@@ -29,21 +29,14 @@ type DevTools = {
   disconnect: () => void
 };
 
+type Store<T> = Observable<T> | StoreFactory<T> | Stores;
 type Stores = { [string]: Observable<*> };
 type StoreFactory<T> = () => Observable<T>;
 
 export default function inject<ComponentProps, StoreProps, UpstreamProps>(
-  store: Observable<StoreProps> | StoreFactory<StoreProps> | Stores,
+  store: Store<StoreProps>,
   props: PropsType<ComponentProps, StoreProps, UpstreamProps>
 ): Injector<ComponentProps, UpstreamProps> {
-  let observable: Observable<StoreProps>;
-  if (store instanceof Observable) {
-    observable = store;
-  } else if (typeof store === 'function') {
-    observable = store();
-  } else {
-    observable = combineLatest(store);
-  }
   return (Component: React$ComponentType<ComponentProps>) => {
     type State = { store: StoreProps };
     class Inject extends React.Component<UpstreamProps, State> {
@@ -66,6 +59,7 @@ export default function inject<ComponentProps, StoreProps, UpstreamProps>(
       }
 
       componentDidMount() {
+        const observable = getObservable(store);
         this.subscription = observable.subscribe(storeProps => {
           if (this.devTools) {
             this.devTools.send('update', storeProps);
@@ -122,4 +116,16 @@ function combineLatest<T>(stores: Stores): Observable<T> {
   });
   data$.subscribe(() => {});
   return data$;
+}
+
+function getObservable<T>(store: Store<T>): Observable<T> {
+  let observable: Observable<T>;
+  if (store instanceof Observable) {
+    observable = store;
+  } else if (typeof store === 'function') {
+    observable = store();
+  } else {
+    observable = combineLatest(store);
+  }
+  return observable;
 }

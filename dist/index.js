@@ -15,7 +15,7 @@ Object.defineProperty(exports, 'RxInject', {
 
 var _RxInject = require('./RxInject');
 
-Object.defineProperty(exports, 'RxInjectNew', {
+Object.defineProperty(exports, 'RxInjectFlow', {
   enumerable: true,
   get: function get() {
     return _interopRequireDefault(_RxInject).default;

@@ -23,7 +23,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function inject(store, props) {
-  var observable = store instanceof _rxjs.Observable ? store : combineLatest(store);
   return function (Component) {
     var Inject = function (_React$Component) {
       _inherits(Inject, _React$Component);
@@ -55,6 +54,7 @@ function inject(store, props) {
         value: function componentDidMount() {
           var _this3 = this;
 
+          var observable = getObservable(store);
           this.subscription = observable.subscribe(function (storeProps) {
             if (_this3.devTools) {
               _this3.devTools.send('update', storeProps);
@@ -116,4 +116,16 @@ function combineLatest(stores) {
   }]));
   data$.subscribe(function () {});
   return data$;
+}
+
+function getObservable(store) {
+  var observable = void 0;
+  if (store instanceof _rxjs.Observable) {
+    observable = store;
+  } else if (typeof store === 'function') {
+    observable = store();
+  } else {
+    observable = combineLatest(store);
+  }
+  return observable;
 }
