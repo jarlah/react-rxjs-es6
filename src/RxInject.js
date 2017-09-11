@@ -30,12 +30,20 @@ type DevTools = {
 };
 
 type Stores = { [string]: Observable<*> };
+type StoreFactory<T> = () => Observable<T>;
 
 export default function inject<ComponentProps, StoreProps, UpstreamProps>(
-  store: Observable<StoreProps> | Stores,
+  store: Observable<StoreProps> | StoreFactory<StoreProps> | Stores,
   props: PropsType<ComponentProps, StoreProps, UpstreamProps>
 ): Injector<ComponentProps, UpstreamProps> {
-  const observable: Observable<StoreProps> = store instanceof Observable ? store : combineLatest(store);
+  let observable: Observable<StoreProps>;
+  if (store instanceof Observable) {
+    observable = store;
+  } else if (typeof store === 'function') {
+    observable = store();
+  } else {
+    observable = combineLatest(store);
+  }
   return (Component: React$ComponentType<ComponentProps>) => {
     type State = { store: StoreProps };
     class Inject extends React.Component<UpstreamProps, State> {
