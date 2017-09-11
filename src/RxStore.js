@@ -1,5 +1,5 @@
 // @flow
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export function createAction<T>(name: string): Subject<T> {
   const action = new Subject();
@@ -11,8 +11,10 @@ export function createAction<T>(name: string): Subject<T> {
   return action;
 }
 
-export function createActions<T>(...actionNames: Array<string>): { [string]: Subject<T> } {
-  return actionNames.reduce((akk, name) => ({...akk, [name]: createAction(name)}), {});
+export function createActions<T>(
+  ...actionNames: Array<string>
+): { [string]: Subject<T> } {
+  return actionNames.reduce((akk, name) => ({ ...akk, [name]: createAction(name) }), {});
 }
 
 export type Reducer<T> = (state: T) => T;
@@ -34,8 +36,7 @@ export function createStore<T>(
     .refCount()
     .startWith(initialState);
   if (keepAlive) {
-    store.subscribe(() => {
-    });
+    store.subscribe(() => {});
   }
   return store;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 
 import RxContainer from './RxContainer';
 
@@ -25,13 +25,13 @@ function combineLatestObj(obj) {
   });
 }
 
-export default (data = {}, commands = {}, props = {}) => (Component) => {
+export default (data = {}, commands = {}, props = {}) => Component => {
   const callbacks = entries(commands).reduce((acc, [key, observer]) => {
-    acc[key.replace(/\$$/, '')] = (value) => observer.next(value);
+    acc[key.replace(/\$$/, '')] = value => observer.next(value);
     return acc;
   }, {});
 
-  const contextTypes = entries({ ...data}).reduce((acc, [k, v]) => {
+  const contextTypes = entries({ ...data }).reduce((acc, [k, v]) => {
     if (v.type) {
       acc[k] = v.type;
     }
@@ -74,9 +74,10 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
         ...observablesFromContext
       };
 
-      this.propsObservable = Object.keys(allObservables).length === 0
-        ? Observable.of([{}])
-        : combineLatestObj(allObservables).share();
+      this.propsObservable =
+        Object.keys(allObservables).length === 0
+          ? Observable.of([{}])
+          : combineLatestObj(allObservables).share();
     }
 
     render() {
@@ -92,5 +93,5 @@ export default (data = {}, commands = {}, props = {}) => (Component) => {
     }
   }
 
-  return (initialProps) => <RxInject {...initialProps} />;
+  return initialProps => <RxInject {...initialProps} />;
 };

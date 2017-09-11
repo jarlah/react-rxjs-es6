@@ -8,7 +8,6 @@ const getDevToolsExt = () => {
 };
 
 export default class RxContainer extends React.Component {
-
   static propTypes = {
     component: PropTypes.func,
     observable: PropTypes.object,
@@ -19,10 +18,14 @@ export default class RxContainer extends React.Component {
     const devToolsExt = getDevToolsExt();
     if (devToolsExt) {
       this.devTools = devToolsExt.connect();
-      this.unsubscribe = this.devTools.subscribe((message) => {
-        if (message.type === 'DISPATCH' && (message.payload.type === 'JUMP_TO_ACTION' || message.payload.type === 'JUMP_TO_STATE')) {
+      this.unsubscribe = this.devTools.subscribe(message => {
+        if (
+          message.type === 'DISPATCH' &&
+          (message.payload.type === 'JUMP_TO_ACTION' ||
+            message.payload.type === 'JUMP_TO_STATE')
+        ) {
           const props = JSON.parse(message.state);
-          this.setState({ props });
+          this.setState({ props });
         }
       });
     }
@@ -40,7 +43,7 @@ export default class RxContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.observable !== this.props.observable) {
       this.subscription.unsubscribe();
-      this.setState({props: nextProps.initialState});
+      this.setState({ props: nextProps.initialState });
       this.subscription = nextProps.observable.subscribe(props => {
         if (this.devTools) {
           this.devTools.send('update', props);
@@ -64,12 +67,13 @@ export default class RxContainer extends React.Component {
       return null;
     }
     const upstreamProps = { ...this.props, ...this.state.props };
-    const customProps = typeof this.props.injectedProps === 'function'
-      ? this.props.injectedProps(upstreamProps)
-      : {
-        ...upstreamProps,
-        ...this.props.injectedProps
-      };
+    const customProps =
+      typeof this.props.injectedProps === 'function'
+        ? this.props.injectedProps(upstreamProps)
+        : {
+            ...upstreamProps,
+            ...this.props.injectedProps
+          };
     const Component = this.props.component;
     return <Component {...customProps} />;
   }

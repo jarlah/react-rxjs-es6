@@ -20,7 +20,8 @@
   "scripts": {
     "flow": "flow",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src --out-dir dist && flow-copy-source src dist"
+    "build": "babel src --out-dir dist && flow-copy-source src dist",
+    "formatcode": "./node_modules/.bin/prettier --single-quote --trailing-comma none --print-width 90 --write \"{src,__{tests,mocks}__}/**/*.{js,jsx}\""
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -30,6 +31,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "flow-bin": "^0.54.1",
     "flow-copy-source": "^1.2.1",
+    "prettier": "^1.6.1",
     "prop-types": "^15.5.7"
   },
   "dependencies": {
