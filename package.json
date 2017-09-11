@@ -19,7 +19,7 @@
   },
   "scripts": {
     "flow": "flow",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo 'not implemented'",
     "build": "babel src --out-dir dist && flow-copy-source src dist",
     "formatcode": "./node_modules/.bin/prettier --single-quote --trailing-comma none --print-width 90 --write \"{src,__{tests,mocks}__}/**/*.{js,jsx}\""
   },
