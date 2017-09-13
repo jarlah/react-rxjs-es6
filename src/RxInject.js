@@ -2,14 +2,14 @@
 import React from 'react';
 import { Observable, Subscription } from 'rxjs';
 
-export type Injector<ComponentProps, UpstreamProps> = (
+export type Injector<ComponentProps, ParentProps> = (
   Component: React$ComponentType<ComponentProps>
-) => React$ComponentType<UpstreamProps>;
+) => React$ComponentType<ParentProps>;
 
 export type PropsType<ComponentProps, StoreProps, UpstreamProps> = (
   store: StoreProps,
   upstream: UpstreamProps
-) => ComponentProps | ComponentProps;
+) => ComponentProps;
 
 type Message = {
   type: string,
@@ -33,13 +33,13 @@ type Store<T> = Observable<T> | StoreFactory<T> | Stores;
 type Stores = { [string]: Observable<*> };
 type StoreFactory<T> = () => Observable<T>;
 
-export default function inject<ComponentProps, StoreProps, UpstreamProps>(
+export default function inject<ComponentProps, StoreProps, ParentProps>(
   store: Store<StoreProps>,
-  props: PropsType<ComponentProps, StoreProps, UpstreamProps>
-): Injector<ComponentProps, UpstreamProps> {
+  props: PropsType<ComponentProps, StoreProps, ParentProps>
+): Injector<ComponentProps, ParentProps> {
   return (Component: React$ComponentType<ComponentProps>) => {
     type State = { store: StoreProps };
-    class Inject extends React.Component<UpstreamProps, State> {
+    class Inject extends React.Component<ParentProps, State> {
       state: State;
       subscription: Subscription;
       unsubscribe: () => void;
